@@ -83,26 +83,28 @@ def crop_and_warp(img, points):
     # Performs the transformation on the original image
     return cv2.warpPerspective(img, m, (int(side), int(side)))
 
-def get_chessboard(filename):
+def get_chessboard(filename,show=True):
     original_image = cv2.resize(cv2.imread(filename,0),(512,512))
     preprocessed_image = preprocess_image(original_image)
     points = find_corners_of_largest_polygon(preprocessed_image)
-    cropped_image = crop_and_warp(original_image,points)
-    fig = plt.figure(figsize=(10, 7))
-    fig.add_subplot(1, 2, 1)
-    plt.imshow(original_image,cmap='gray')
-    plt.xticks([])
-    plt.yticks([])
-#     plt.axis('off')
-    plt.title("Original Image")
+    colored_img = cv2.resize(cv2.imread(filename),(512,512))
+    cropped_image = crop_and_warp(colored_img,points)
+    if show:
+        fig = plt.figure(figsize=(10, 7))
+        fig.add_subplot(1, 2, 1)
+        plt.imshow(original_image,cmap='gray')
+        plt.xticks([])
+        plt.yticks([])
+    #     plt.axis('off')
+        plt.title("Original Image")
 
-    fig.add_subplot(1, 2, 2)
-    plt.imshow(cropped_image,cmap='gray')
-    plt.xticks([])
-    plt.yticks([])
-#     plt.axis('off')
-    plt.title("Extracted ChessBoard")
-    plt.show()
+        fig.add_subplot(1, 2, 2)
+        plt.imshow(cropped_image,cmap='gray')
+        plt.xticks([])
+        plt.yticks([])
+    #     plt.axis('off')
+        plt.title("Extracted ChessBoard")
+        plt.show()
     return cropped_image
 
 def split_cells(img):
