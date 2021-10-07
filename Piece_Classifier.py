@@ -47,9 +47,9 @@ def get_fen_url(predictions):
     rows = '/'.join(rows)
     fen_url = 'https://chessboardimage.com/{}.png'.format(rows)
     urllib.request.urlretrieve(fen_url,"result.png")
-    return fen_url
+    return rows,fen_url
 
-def show_results(filename):
+def show_results(filename,show=True):
     result_img = cv2.imread('result.png')
     fig = plt.figure(figsize=(12,12))
 
@@ -65,9 +65,11 @@ def show_results(filename):
     plt.yticks([])
     plt.title('Prediction')
 
-    plt.show()
+    fig.savefig('results.png',bbox_inches='tight')
+    if show:
+        plt.show()
 
-def get_prediction(filename):
+def get_prediction(filename,show=True):
     model = get_model()
     model.load_weights('best_model_multi.h5')
     chessboard = BoardExtractor.get_chessboard(filename,show=False)
@@ -86,5 +88,6 @@ def get_prediction(filename):
             continue
         pred = np.argmax(model.predict(np.array([img])),axis=1)
         predictions.append(labels[pred[0]])
-    get_fen_url(predictions)
-    show_results(filename)
+    fen,link = get_fen_url(predictions)
+    show_results(filename,show)
+    return fen
